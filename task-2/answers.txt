@@ -1,0 +1,21 @@
+1. std::pair и std::tuple
+
+2. std::array
+
+3. std::vector
+
+4. std::deque
+
+5. std::list
+
+6. std::forward_list
+
+7. 
+
+8. circular buffer из Boost
+
+9. Circular buffer из Boost не может войти в стандарт, так как 
+в стандарте есть правило, что адрес начала должен быть меньше 
+адреса конца.
+
+10. 
