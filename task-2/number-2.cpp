@@ -3,7 +3,7 @@
 #include<array>
 #include<deque>
 #include<list>
-//#include<queue>
+#include<forward_list>
 
 #include<algorithm>
 #include<chrono>
@@ -23,28 +23,32 @@ int main(){
     std::array<int, 10> cont2 {10, 9, 8, 7, 6, 5, 4, 3, 2, 1};
     std::deque<int> cont3 {10, 9, 8, 7, 6, 5, 4, 3, 2, 1};
     std::list<int> cont4 {10, 9, 8, 7, 6, 5, 4, 3, 2, 1};
-    //std::queue<int> cont5 = {10, 9, 8, 7, 6, 5, 4, 3, 2, 1};
+    std::forward_list<int> cont5 = {10, 9, 8, 7, 6, 5, 4, 3, 2, 1};
 
-    std::cout << "\nvector\t";
+    std::cout << "\nvector\t\t";
     time_of_sort1(cont1);
     //time_of_sort2(cont1);
     not_sort();
     
-
-    std::cout << "\narray\t";
+    std::cout << "\narray\t\t";
     time_of_sort1(cont2);
     //time_of_sort2(cont2);
     not_sort();
 
-    std::cout << "\ndeque\t";
+    std::cout << "\ndeque\t\t";
     time_of_sort1(cont3);
     //time_of_sort2(cont3);
     not_sort();
 
-    std::cout << "\nlist\t";
+    std::cout << "\nlist\t\t";
     //time_of_sort1(cont4);
     not_sort();
     time_of_sort2(cont4);
+
+    std::cout << "\nforward_list\t";
+    //time_of_sort1(cont5);
+    not_sort();
+    time_of_sort2(cont5);
     
     cout << "\n\nLeader is an array.\n";
 
