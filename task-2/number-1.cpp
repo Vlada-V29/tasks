@@ -64,5 +64,13 @@ void part2(){
 }
 
 void part3(){
+    std::vector<int> v3(100, 1);//100 -> 10^(11)
+    std::cout << "Let's break all!" << std::endl;
+    std::cout << "Now we have vector: " << std::endl;
+    print_size_and_capacity(v3);
+    std::cout << "Let's do push_back " << std::endl;
+    v3.push_back(2);
+    std::cout << "Ups..." << std::endl;
+    
     //???
 }
