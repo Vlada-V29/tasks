@@ -2,20 +2,16 @@
 
 using namespace std;
 
-unsigned hashsh(float x)
+std::size_t hashsh(float x)
 {
-    union
-    {
-        float f;
-        unsigned u;
-    };
-    f = x;
-    return u;
+    
+    return static_cast<std::size_t>(x * 100) % 10000;
 }
 
 int main()
 {
-    //???
+    std::cout << hashsh(3423.2345) << std::endl;
+
     return 0;
 }
 
