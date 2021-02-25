@@ -28,16 +28,6 @@ template < auto N, typename Container, typename Forward_Iterator >
 void fill_multi_array(const Container & container, Forward_Iterator multi_array)
 {
 
-	/*if constexpr (N > 1)
-	{
-		for(auto i = std::begin(container), i < std::end(container), ++i)
-			fill_multi_array < N - 1 > (*i, (multi_array++) -> begin());
-	} 
-	else
-	{
-		for(auto i = std::begin(container), i < std::end(container), ++i)
-			*(multi_array++) = i;
-	}*/
 	if constexpr (N > 1)
         {
             for(auto i = std::begin(container); i < std::end(container); ++i)
@@ -54,13 +44,6 @@ void fill_multi_array(const Container & container, Forward_Iterator multi_array)
             }
         }
 	
-	// Write your code here ...
-
-	// USE: recursive template instantiation of fill_multi_array
-	// USE: std::next(multi_array, i)->begin() in recursion
-	// USE: if constexpr (N > 1) { ... } else { ... }
-
-	// Enjoy debugging!
 }
 
 template < typename T, auto N, typename Container >
