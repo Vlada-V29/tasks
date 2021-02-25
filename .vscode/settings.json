@@ -48,6 +48,14 @@
         "iomanip": "cpp",
         "bitset": "cpp",
         "list": "cpp",
-        "forward_list": "cpp"
+        "forward_list": "cpp",
+        "cstring": "cpp",
+        "complex": "cpp",
+        "unordered_set": "cpp",
+        "set": "cpp",
+        "thread": "cpp",
+        "cfenv": "cpp",
+        "cinttypes": "cpp",
+        "typeindex": "cpp"
     }
 }
