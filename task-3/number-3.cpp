@@ -97,7 +97,7 @@ std::ostream &operator<<(std::ostream &stream, const std::pair<T1, T2> p)
 void print_hash_table_state(const std::unordered_set<MyClass,
 													 MyClass_Hash, MyClass_Equal> &unordered_set)
 {
-	std::cout << "size:            " << unordered_set.size() << std::endl;
+	/*std::cout << "size:            " << unordered_set.size() << std::endl;
 	std::cout << "buckets:         " << unordered_set.bucket_count() << std::endl;
 	std::cout << "load factor:     " << unordered_set.load_factor() << std::endl;
 	std::cout << "max load factor: " << unordered_set.max_load_factor() << std::endl;
@@ -117,44 +117,52 @@ void print_hash_table_state(const std::unordered_set<MyClass,
 	}
 
 	std::cout << std::endl;
-
-	std::cout << "data: " << std::endl;
+	*/
+	//std::cout << "data: " << std::endl;
+	int cur = 0;
 
 	for (auto index = 0U; index != unordered_set.bucket_count(); ++index)
 	{
-		std::cout << " b[" << std::setw(3) << index << "]: ";
+		//std::cout << " b[" << std::setw(3) << index << "]: ";
 
 		for (auto iterator = unordered_set.begin(index);
-			 iterator != unordered_set.end(index); ++iterator)
+			 iterator != unordered_set.end(index); )//++iterator)
 		{
-			std::cout << *iterator << ' ';
+			//std::cout << *iterator << ' ';
+			if (++iterator != unordered_set.end(index)){
+				++cur;
+			}
+			
 		}
 
-		std::cout << std::endl;
+		//std::cout << std::endl;
 	}
 
-	std::cout << std::endl;
+	//std::cout << std::endl;
+
+	std::cout << cur << std::endl;
 }
 
 int main(int argc, char **argv)
 {
 	srand(23);
-	std::unordered_set<MyClass, MyClass_Hash, MyClass_Equal> MyClasss;
+	
 
-	for (auto i = 1; i < 11; ++i)
+	int N = 1000001;
+
+	for (auto i = 100000; i < N; i += 50000)
 	{
-		MyClasss.insert(MyClass());
+		std::unordered_set<MyClass, MyClass_Hash, MyClass_Equal> MyClasss;
+		for (auto j = 1; j < i; ++j)
+		{
+			MyClasss.insert(MyClass());
+		}
+		std::cout << i << " ";
+		print_hash_table_state(MyClasss);
 	}
-	//MyClasss.insert(MyClass("Ivan", 42, 23.5));
-	//MyClasss.insert(MyClass("Jens", 66, 34.6));
-
-	/*for (const auto & MyClass : MyClasss)
-	{
-		std::cout << MyClass << std::endl;
-	}*/
-
-	print_hash_table_state(MyClasss);
-
+	
+	
+		
 	system("pause");
 
 	return EXIT_SUCCESS;
