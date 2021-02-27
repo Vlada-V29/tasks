@@ -145,12 +145,12 @@ void print_hash_table_state(const std::unordered_set<MyClass,
 
 int main(int argc, char **argv)
 {
-	srand(23);
+	srand(static_cast<unsigned int>(time(0)));
 	
 
-	int N = 1000001;
+	int N = 1001;
 
-	for (auto i = 100000; i < N; i += 50000)
+	for (auto i = 100; i < N; i += 50)
 	{
 		std::unordered_set<MyClass, MyClass_Hash, MyClass_Equal> MyClasss;
 		for (auto j = 1; j < i; ++j)
