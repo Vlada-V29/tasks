@@ -41,7 +41,6 @@ int main()
     return 0;
 }
 
-//ни иму тетин??
 
 void check_time_vec()
 {
