@@ -6,7 +6,7 @@
 
 
 
-bool prime(const std::vector<int>& v0);
+bool is_prime(int & v);
 
 void print(const std::vector<int>& v0){
     for(auto i : v0)
@@ -38,13 +38,10 @@ int main()
     std::shuffle(std::begin(v1), std::end(v1), rng);
     print(v1);
 
-
-
     std::cout << "4. And the next one (without repetitions): \n";//4  
     sort(v1.begin(),v1.end());
     v1.erase(unique(v1.begin(),v1.end()), v1.end());
     print(v1);
-
 
     std::cout << "5. Number of odd numbers: ";//5
     std::cout << std::count_if(v1.begin(), v1.end(), 
@@ -56,10 +53,7 @@ int main()
     std::cout << *(std::min_element(v1.begin(), v1.end())) << std::endl; 
     
     std::cout << "7. Prime number: ";//7
-    if(prime(v1))
-    {
-        std::cout << "no prime number" << std::endl;
-    }
+    std::cout << *(std::find_if(v1.begin(), v1.end(), is_prime)) << std::endl;
     
     std::cout << "8. Squares of numbers: ";//8
     std::for_each(v1.begin(), v1.end(), [](int & elem){ elem *= elem;});
@@ -130,35 +124,35 @@ int main()
     print(v3);
     print(v4);
 
-
     return 0;
 }
 
 
-bool prime(const std::vector<int>& v0)
-{
-    int count = 0;
-    for(auto i : v0)
+bool is_prime(int & i)
+{   
+    if(i == 1)
     {
-        if((i % 2) && (i > 1))
-        {
-            for(int j = 3; (j < i)&&(count == 0); j+=2)
-            {
-                (i%j) == 0 ? ++count : count+=0;
-                
-            }
-            if(!(count))
-            {
-                std::cout << i << std::endl;
-                return false;
-            }
-        }
-        if(i == 2)
-        {
-            std::cout << i << std::endl;
-            return false;
-        }
-        count = 0;
+        return false;
     }
-    return true;
+    if(i == 2)
+    {
+        return true;
+    }
+    int count = 0;
+    if((i % 2) && (i > 2))
+    {
+        for(int j = 3; (j*j <= i)&&(count == 0); j+=2)
+        { 
+            if((i%j) == 0)
+            {
+                ++count;
+            }   
+        }
+        if(count == 0)
+        {
+            return true;
+        }    
+    }
+    return false;
 }
+
