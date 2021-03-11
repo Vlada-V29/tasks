@@ -57,6 +57,9 @@
         "cfenv": "cpp",
         "cinttypes": "cpp",
         "typeindex": "cpp",
-        "numeric": "cpp"
+        "numeric": "cpp",
+        "random": "cpp",
+        "codecvt": "cpp",
+        "regex": "cpp"
     }
 }
