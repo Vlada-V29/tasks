@@ -60,6 +60,7 @@
         "numeric": "cpp",
         "random": "cpp",
         "codecvt": "cpp",
-        "regex": "cpp"
+        "regex": "cpp",
+        "locale": "cpp"
     }
 }
