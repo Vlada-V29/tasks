@@ -46,6 +46,31 @@ char hashsh(char l)
     if(l == 'в') return 'v';
     if(l == 'г') return 'g';
     if(l == 'д') return 'd';
+	if(l == 'е') return 'e';
+	if(l == 'ж') return 'z';
+	if(l == 'з') return 'z';
+	if(l == 'и') return 'i';
+	if(l == 'й') return 'i';
+	if(l == 'к') return 'k';
+	if(l == 'л') return 'l';
+	if(l == 'м') return 'm';
+	if(l == 'н') return 'n';
+	if(l == 'о') return 'o';
+	if(l == 'п') return 'p';
+	if(l == 'р') return 'r';
+	if(l == 'с') return 's';
+	if(l == 'т') return 't';
+	if(l == 'у') return 'u';
+	if(l == 'ф') return 'f';
+	if(l == 'х') return 'h';
+	if(l == 'ц') return 'c';
+	if(l == 'ч') return 'c';
+	if(l == 'ш') return 's';
+	if(l == 'щ') return 's';
+	if(l == 'ы') return 'i';
+	if(l == 'э') return 'a';
+	if(l == 'ю') return 'u';
+	if(l == 'я') return 'a';
     //if(l == '') return '';
 }
 
