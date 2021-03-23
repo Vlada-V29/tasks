@@ -18,6 +18,7 @@ struct Person
     Person():name(" "), age(0), weight(0.0){};
     Person(std::string n, int a, double w):name(n), age(a), weight(w){};
     friend std::ostream& operator<< (std::ostream &out, const Person &p);
+    friend std::istream& operator<< (std::istream &in, const Person &p);
     
 };
 
@@ -28,60 +29,47 @@ std::ostream& operator<< (std::ostream &out, const Person &p)
  
     return out;
 }
+std::istream& operator>> (std::istream &in, Person &p)
+{
+    std::cout << "Enter the name, age and weight of the person:";
+    in >> p.name; 
+    in >> p.age >> p.weight;
+ 
+    return in;
+}
 
 
 int main()
 {
-    std::string n;
-    int a;
-    double w;
-
-    std::cout << "Enter the name, age and weight of the person:";
-    std::cin >> n;
-    std::cin >> a;
-    std::cin >> w;
-    Person p1(n, a, w);
-    std::cout << "Enter the name, age and weight of the person:";
-    std::cin >> n;
-    std::cin >> a;
-    std::cin >> w;
-    Person p2(n, a, w);
-    std::cout << "Enter the name, age and weight of the person:";
-    std::cin >> n;
-    std::cin >> a;
-    std::cin >> w;
-    Person p3(n, a, w);
+    
+    Person* p = new Person[3];
+    for(auto i = 0; i < 3; ++i)
+    {
+        std::cin >> p[1];
+    }
+    
 
     auto path = std::experimental::filesystem::current_path();
     std::experimental::filesystem::create_directory(path / "mydir");
     std::experimental::filesystem::path path_output1 = "mydir/f1.txt";
     std::experimental::filesystem::path path_output2 = "mydir/f2.txt";
     std::experimental::filesystem::path path_output3 = "mydir/f3.txt";
-    
-    json j1;
-    json j2;
-    json j3;
 
-    j1["Name"] = p1.name;
-	j1["age"] = p1.age;
-    j1["weight"] = p1.weight;
+    json* j = new json[3];
+    for(auto i = 0; i < 3; ++i)
+    {
+        j[1]["Name"] = p[1].name;
+	    j[1]["age"] = p[1].age;
+        j[1]["weight"] = p[1].weight;
+    }
 
-    j2["Name"] = p2.name;
-	j2["age"] = p2.age;
-    j2["weight"] = p2.weight;
+    for(auto i = 0; i < 3; ++i)
+    {
+        std::fstream fout1(path_output1.string(), std::ios::out);
+	fout1 << std::setw(4) << j[1];
+    }
 
-    j3["Name"] = p3.name;
-	j3["age"] = p3.age;
-    j3["weight"] = p3.weight;
-
-
-    std::fstream fout1(path_output1.string(), std::ios::out);
-	fout1 << std::setw(4) << j1;
-    std::fstream fout2(path_output2.string(), std::ios::out);
-	fout2 << std::setw(4) << j2;
-    std::fstream fout3(path_output3.string(), std::ios::out);
-	fout3 << std::setw(4) << j3;
-
+    delete [] p;
     return EXIT_SUCCESS;
 }
 
