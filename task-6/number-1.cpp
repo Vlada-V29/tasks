@@ -26,8 +26,8 @@ int main()
         if(test(c1, c2))
         {
             iof.seekg(-2, ios::cur);
-            iof.put('0');
-            iof.put('0');
+            iof.put(' ');
+            iof.put(' ');
 
         }
         c1 = c2;
