@@ -25,9 +25,9 @@ int main()
 		iof.get(c2);
         if(test(c1, c2))
         {
-            iof.seekg(-1, ios::cur);
-            iof.put(' ');
-            iof.put(' ');
+            iof.seekg(-2, ios::cur);
+            iof.put('0');
+            iof.put('0');
 
         }
         c1 = c2;
@@ -40,11 +40,19 @@ int main()
 bool test(char c1, char c2){
     static int k = 0;
 
-    if((c2 == '"')&&(c1 != '\\'))
+    if((c2 == '"')&&(c1 != '/'))
     {
         k? --k : ++k;
     }
-    if((c2 == '\\')&&(c1 != '\\')&&(!k))
+    if((c2 == '/')&&(c1 == '/')&&(!k))
+    {
+        return true;
+    }
+    if((c2 == '*')&&(c1 == '/')&&(!k))
+    {
+        return true;
+    }
+    if((c2 == '/')&&(c1 == '*')&&(!k))
     {
         return true;
     }
