@@ -14,21 +14,11 @@ double pi_1()
 {
     static double k = 0;
     const int N = 100000;
-    //static int k = 0;
-    // std::mt19937 engine; 
-    // engine.seed(std::time(nullptr));
     std::random_device rd;
     std::mt19937 mersenne(rd());
     std::uniform_real_distribution<> un_distrib(0, 1);
-    // std::normal_distribution<> norm_distrib{ -1, 1 };
-    //cout << un_distrib(mersenne) << endl;
     for(auto i = 0; i < N; ++i)
     {
-        // double x = engine();// no diapazon
-        // double y = engine();
-        // double x = norm_distrib(mersenne);
-        // cout << x << endl;
-        // double y = norm_distrib(mersenne);
         double x = un_distrib(mersenne);
         double y = un_distrib(mersenne);
         if( (x*x + y*y) <= 1.0)
@@ -46,7 +36,7 @@ void pi_22(double xm, const int N, double &K)
     std::mt19937 mersenne(rd());
     std::uniform_real_distribution<> un_distrib(0, 1);
     std::uniform_real_distribution<> un_distrib_x(xm, xm + 0.25);
-    // cout << un_distrib_x(mersenne) << endl;
+    
     for(auto i = 0; i < N; ++i)
     {
         double x = un_distrib_x(mersenne);
@@ -56,7 +46,7 @@ void pi_22(double xm, const int N, double &K)
             ++k;
         }
     }
-    //return k;
+    
     g_mutex.lock();
     K += k;
     g_mutex.unlock();
@@ -84,8 +74,8 @@ double pi_2()
 
 int main()
 {
-    cout << "pi_1 = " << pi_1() << endl;
-    cout << "pi_2 = " << pi_2() << endl;
+    cout << "not parallel:  pi_1 = " << pi_1() << endl;
+    cout << "parallel:      pi_2 = " << pi_2() << endl;
 
     return EXIT_SUCCESS;
 }
