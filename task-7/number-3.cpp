@@ -16,7 +16,7 @@ int parallel_each(Iterator first, Iterator last, Compare fun)
 
     if (length <= max_size)
 	{
-		std::for_each(first, last, inc);
+		std::for_each(first, last, fun);
 	}
     else
 	{
