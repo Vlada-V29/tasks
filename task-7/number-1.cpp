@@ -26,16 +26,16 @@ double pi_1()
             ++k;
         }
     }
-    return 4 * k / N;
+    return 4 * static_cast<double>(k) / static_cast<double>(N);
 }
 
-void pi_22(double xm, const int N, double &K)
+void pi_22(double xm, double xM, const int N, double &K)
 {
     double k = 0;
     std::random_device rd;
     std::mt19937 mersenne(rd());
     std::uniform_real_distribution<> un_distrib(0, 1);
-    std::uniform_real_distribution<> un_distrib_x(xm, xm + 0.25);
+    std::uniform_real_distribution<> un_distrib_x(xm, xM);
     
     for(auto i = 0; i < N; ++i)
     {
@@ -55,20 +55,27 @@ void pi_22(double xm, const int N, double &K)
 double pi_2()
 {
     const int N = 100000;
-    int n = N / 4;
+    int num_core = std::thread::hardware_concurrency();
+    int num_tr = num_core != 0 ? num_core : 2;
+    int n = N / num_tr;
     double k = 0;
+    std::vector < std::thread > th(num_tr);
 
-    thread thr1(pi_22, 0.0, n, std::ref(k));
-	thread thr2(pi_22, 0.25, n, std::ref(k));
-    thread thr3(pi_22, 0.5, n, std::ref(k));
-    thread thr4(pi_22, 0.75, n, std::ref(k));
+    for (std::size_t i = 0; i < num_tr; ++i)
+	{
+		th[i] = std::thread(
+			pi_22, static_cast<double>(i) / static_cast<double>(num_tr), 
+            static_cast<double>(i + 1) / static_cast<double>(num_tr), 
+            n, std::ref(k)); 
 
-    thr1.join();
-	thr2.join();
-    thr3.join();
-	thr4.join();
+	}
 
-    return 4 * k / N;
+	for(int i = 0; i < num_tr; ++i)
+    {
+        th[i].join();
+    }
+    
+    return 4 * static_cast<double>(k) / static_cast<double>(N);
 }
 
 
