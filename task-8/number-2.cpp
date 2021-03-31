@@ -50,17 +50,18 @@ private:
 //{	
 	
 	
-	void Searcher(std::vector <std::string::iterator>& v, std::string str, std::string str0, //T element,
-		std::promise < std::string::iterator > & result, std::atomic < bool > & flag) noexcept
+	void Searcher(std::vector <std::string::iterator>& v, 
+		std::string str, std::string str0)//, //T element,
+		//std::promise < std::string::iterator > & result, std::atomic < bool > & flag) noexcept
 
 	{
 		using Iterator = std::string::iterator;
 		const std::size_t length = str.length();
 		Iterator first = str.begin();
 		Iterator last = str.end();
-		try
-		{
-			for(auto i = 0; (i < length); ++i)
+		//try
+		//{
+			for(std::size_t i = 0; (i < length); ++i)
 			{	
 				if(str.find(str0, i))
 				{
@@ -82,7 +83,8 @@ private:
 					return;
 				}
 			}*/
-		}
+		//}
+		/*
 		catch (...)
 		{
 			try
@@ -94,7 +96,7 @@ private:
 			{
 				// ...
 			}
-		}
+		}*/
 	}
 //};
 
@@ -123,22 +125,26 @@ void parallel_find(std::vector<std::string::iterator>& v, std::string str, std::
 	const std::size_t block_size = length / num_threads;
 
 
-	for(auto i = 0; i < num_threads; ++i)
+	for(auto i = 1; i < num_threads; ++i)
 	{
-		std::string sub = str.substr(i*block_size - length0 + 2, block_size + 2);
-		if(sub == str0)
+		//for(auto i = )
+		//00  std::string sub = str.substr(i*block_size - length0 + 2, i*block_size + length0 - 2);
+		std::string sub = str.substr(i*block_size - length0, i*block_size + length0);
+		std::size_t iter = sub.find(str0);
+		if(iter != std::string::npos)
 		{
 			//
-			v.push_back(first + i*block_size - length0 + 2);
+			//v.push_back(first + i*block_size - length0 + 2);
+			v.push_back(first + iter);//static_cast<Iterator>(iter));
 		}
 	}
 
-	std::promise < Iterator > result;
-	std::atomic < bool > flag(false);
-	std::vector < std::thread > threads(num_threads - 1);
+	//std::promise < Iterator > result;
+	//std::atomic < bool > flag(false);
+	//00 std::vector < std::thread > threads(num_threads - 1);
 
 	{
-		Threads_Guard guard(threads);
+		//00Threads_Guard guard(threads);
 
 		Iterator block_start = first;
 		std::size_t start = 0;
@@ -148,28 +154,30 @@ void parallel_find(std::vector<std::string::iterator>& v, std::string str, std::
 			Iterator block_end = block_start;
 			std::size_t end = start;
 			std::advance(block_end, block_size);
-			std::advance(end, block_size);
+			//std::advance(end, block_size);
+			end += block_size;
 
 
-			threads[i] = std::thread(Searcher, //< Iterator > (),
-				v, str.substr(start, end), str0,
-				//block_start, block_end, element, 
-				std::ref(result), std::ref(flag));
-
+			//00 threads[i] = std::thread(Searcher, //< Iterator > (),
+			//00 	std::ref(v), str.substr(start, end), str0);//,
+				////block_start, block_end, element, 
+				//std::ref(result), std::ref(flag));
+//00  Searcher(std::ref(v), str.substr(start, end), str0);//00
+Searcher(std::ref(v), str, str0);//00
 			block_start = block_end;
 			start = end;
 		}
 
-		Searcher(v, str.substr(start, length), str0,
-				std::ref(result), std::ref(flag));
+		//Searcher(v, str.substr(start, length), str0);//,
+				//std::ref(result), std::ref(flag));
         //Searcher();
 				//< Iterator, T > ()(block_start, last, element, result, flag);
 	}
 
-	if (!flag.load())
-	{
+	//if (!flag.load())
+	//{
 		//return last;
-	}
+	//}
 
 	//return result.get_future().get();
 }
@@ -181,10 +189,22 @@ int main(int argc, char ** argv)
 	//std::iota(v.begin(), v.end(), 1);
 
 	std::string str ("chjbv;iigdcsdc");
-	std::string str0 = "gdcs";
+	std::string str0 = "gd";
 	std::vector < std::string::iterator > v;
+	v.push_back(str.begin());//static_cast<std::size_t>(123));
+	v.clear();
+	std::cout << 1 << std::endl;
 	//auto result = parallel_find(v, str, str0);
+	//parallel_find(std::ref(v), str, str0);
+	Searcher(std::ref(v), str, str0);
+	std::cout << 2 << std::endl;
 
+	if(!(v.empty()))
+	{
+		std::cout << 3 << std::endl;
+		std::cout << *(v[0]) << std::endl;
+	}
+std::cout << 4 << std::endl;
 /*
 	if (result != v.end())
 	{
