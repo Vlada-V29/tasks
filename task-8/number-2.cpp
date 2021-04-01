@@ -57,7 +57,7 @@ void Searcher(std::vector <std::size_t>& v,
 			{	
 				if(str.find(str0, i) != std::string::npos)
 				{
-					std::cout << std::endl;
+					//std::cout << std::endl;
 					std::size_t j = str.find(str0, i);
 					std::lock_guard < std::mutex > lock(mutex);
 					v.push_back(j + start);
@@ -68,9 +68,9 @@ void Searcher(std::vector <std::size_t>& v,
 					i += (length);
 				}
 			}
-			std::cout << std::endl;
-			v.push_back(100);
-		std::cout << std::endl;
+			//std::cout << std::endl;
+			//v.push_back(100);
+		//std::cout << std::endl;
 			
 }
 
@@ -94,12 +94,13 @@ void parallel_find(std::vector<std::size_t>& v, std::string str, std::string str
 
 	for(auto i = 1; i < num_threads; ++i)
 	{
-		std::string sub = str.substr(i*block_size - length0 + 2, i*block_size + length0 - 2);
+		std::string sub = str.substr(i*block_size - length0 + 2, 2*length0 - 2);
 		std::size_t iter = sub.find(str0);
 		if(iter != std::string::npos)
 		{
-			v.push_back(i*block_size - length0 + iter);
+			v.push_back(i*block_size - length0 + 2 + iter);
 		}
+		//std::cout << "for 1 " << i << std::endl;
 	}
 
 	std::vector < std::thread > threads(num_threads - 1);
@@ -117,7 +118,7 @@ void parallel_find(std::vector<std::size_t>& v, std::string str, std::string str
 
 			threads[i] = std::thread(Searcher, 
 			 	v, str.substr(start, end), str0, i*block_size);
-				
+			//Searcher(v, str.substr(start, block_size), str0, i*block_size);
 			start = end;
 		}
 
@@ -129,35 +130,41 @@ void parallel_find(std::vector<std::size_t>& v, std::string str, std::string str
 int main(int argc, char ** argv)
 {
 	
-	std::string str ("chjbaviigyvdcjbvsdchvf");
-	//std::cout << "Enter your string: ";
-	//std::cin >> str;
-
+	std::string str ("chjbaviigyvdcjbvsdchvfchjbaviigyvdcjbvsdchvfchjbaviigyvdcjbvsdchvfchjbaviigyvdcjbvsdchvf");
+	//00 std::cout << "Enter your string: ";
+	//00 std::cin >> str;
+/*
+std::cout << str.substr(10, 5) << std::endl;
+std::cout << str.substr(16, 5) << std::endl;
+std::cout << str.substr(32, 5) << std::endl;
+std::cout << str.substr(38, 5) << std::endl;
+*/
 	// std::string str0 ("gd");
 	std::string str0 ("dc");
 	//std::string str0 = "dс";
-	//std::cout << "Enter your string to find: ";
-	//std::cin >> str0;
+	//00 std::cout << "Enter your string to find: ";
+	//00 std::cin >> str0;
 
 
 	std::vector < std::size_t> v;
 	v.push_back(100);
-	std::cout << 1 << std::endl;
+	//std::cout << "point " << 1 << std::endl;
 	
-	//parallel_find(std::ref(v), str, str0);
+	parallel_find(std::ref(v), str, str0);
 	//Searcher(v, str, str0);
 	
-	std::cout << 2 << std::endl;
+	//std::cout << "point " << 2 << std::endl;
 	
 	if(!(v.empty()))
 	{
-		std::cout << 3 << std::endl;
+		//std::cout << "point " << 3 << std::endl;Indices:
+		std::cout << "Indices: " << std::endl;
 		for(auto i : v)
 		{
 			std::cout << (i) << std::endl;
 		}		
 	}
-std::cout << 4 << std::endl;
+//std::cout << "point " << 4 << std::endl;
 	
 	system("pause");
 
