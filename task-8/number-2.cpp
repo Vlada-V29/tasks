@@ -50,30 +50,51 @@ private:
 //{	
 	
 	
-	void Searcher(std::vector <std::string::iterator>& v, 
+	void Searcher(std::vector <std::size_t>& v, 
 		std::string str, std::string str0)//, //T element,
 		//std::promise < std::string::iterator > & result, std::atomic < bool > & flag) noexcept
-
+		
 	{
-		using Iterator = std::string::iterator;
+		std::cout<<&v<<std::endl;
+		//using Iterator = std::string::iterator;
 		const std::size_t length = str.length();
-		Iterator first = str.begin();
-		Iterator last = str.end();
+		//Iterator first = str.begin();
+		//Iterator last = str.end();
 		//try
 		//{
-			for(std::size_t i = 0; (i < length); ++i)
+			for(std::size_t i = 1; (i <= length); ++i)
 			{	
-				if(str.find(str0, i))
+				if(str.find(str0, i) != std::string::npos)
 				{
-					i = str.find(str0);
+					std::cout << std::endl;
+					//std::cout << i << std::endl;
+					std::size_t j = str.find(str0, i);
+					//std::cout << str.find(str0,i) << std::endl;
 					//std::lock_guard < std::mutex > lock(mutex);
-					v.push_back(first + i);
+					//Iterator ferst = first;
+					// for(auto ki = 0; ki < j; ++ki){
+					// 	ferst++;
+					// }
+					//std::cout << *ferst << std::endl;
+					v.push_back(j);
+					//std::cout << *(v[v.size()-1]) << std::endl;
+					i = (j);
+					//std::cout << i << std::endl;
 					
 				}
 				else{
-					i += length;
+					i += (length);
 				}
 			}
+			std::cout << std::endl;
+			v.push_back(100);
+			/*for(auto i : v)
+		{
+			std::cout << i << std::endl;
+		}*/
+			//std::cout<<&v<<std::endl;
+
+		std::cout << std::endl;
 			/*for (; (first != last) && !flag.load(); ++first)
 			{
 				if (*first == element)
@@ -97,11 +118,12 @@ private:
 				// ...
 			}
 		}*/
+	//return v;
 	}
 //};
 
 //template < typename Iterator, typename T >
-void parallel_find(std::vector<std::string::iterator>& v, std::string str, std::string str0)
+/*void parallel_find(std::vector<std::string::iterator>& v, std::string str, std::string str0)
 {
 	using Iterator = std::string::iterator;
 	Iterator first = str.begin();
@@ -181,28 +203,47 @@ Searcher(std::ref(v), str, str0);//00
 
 	//return result.get_future().get();
 }
-
+*/
 int main(int argc, char ** argv)
 {
 	//std::vector < int > v(100);
 
 	//std::iota(v.begin(), v.end(), 1);
 
-	std::string str ("chjbv;iigdcsdc");
-	std::string str0 = "gd";
-	std::vector < std::string::iterator > v;
-	v.push_back(str.begin());//static_cast<std::size_t>(123));
-	v.clear();
+	std::string str ("chjbaviigdcjbvsdc");
+	// std::string str0 ("gd");
+	std::string str0 ("d");
+
+	//std::string str0 = "dс";
+	std::vector < std::size_t> v;
+	v.push_back(100);//static_cast<std::size_t>(123));
+	//v.clear();
+	//std::cout<<&v<<std::endl;
 	std::cout << 1 << std::endl;
 	//auto result = parallel_find(v, str, str0);
 	//parallel_find(std::ref(v), str, str0);
-	Searcher(std::ref(v), str, str0);
-	std::cout << 2 << std::endl;
+	//std::vector <std::string::iterator> ROMALOH = Searcher(v, str, str0);
+	Searcher(v, str, str0);
+	//std::cout<<&v<<std::endl;
 
+	std::cout << 2 << std::endl;
+	
+	
+	//std::cout << 22 << std::endl;
 	if(!(v.empty()))
 	{
-		std::cout << 3 << std::endl;
-		std::cout << *(v[0]) << std::endl;
+		for(auto i : v)
+		{
+			std::cout << (i) << std::endl;
+		}
+
+
+		// for(auto i : v)
+		// {
+		// 	std::cout << *(i) << std::endl;
+		// }
+		
+		
 	}
 std::cout << 4 << std::endl;
 /*
@@ -215,6 +256,7 @@ std::cout << 4 << std::endl;
 		std::cout << "Element not found." << std::endl;
 	}
 */
+//std::cout << (v[v.size()-1]) << std::endl;
 	system("pause");
 
 	return EXIT_SUCCESS;
