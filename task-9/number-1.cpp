@@ -54,7 +54,7 @@ int main(int argc, char ** argv)
 	//std::cout << 45 << std::endl;
 
 	//Insert data in the map
-	for(int i = 0; i < 100; ++i)
+	for(int i = 0; i < 10; ++i)
 	{
 		mymap->insert(std::pair<KeyType, MappedType>(i, "bfbkj"));
 	}
