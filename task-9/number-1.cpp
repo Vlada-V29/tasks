@@ -4,6 +4,9 @@
 #include <string>//std::pair<int, std::string>
 #include <utility>
 #include <chrono>
+#include<thread>
+#include <mutex>
+
 
 #include <boost/interprocess/allocators/allocator.hpp>
 #include <boost/interprocess/containers/map.hpp>
@@ -11,6 +14,65 @@
 #include <boost/interprocess/managed_shared_memory.hpp>
 
 using namespace boost::interprocess;
+int quan_message = 0;
+std::mutex m_mutex;
+
+typedef int KeyType;
+typedef std::string MappedType;
+typedef std::pair<const int, std::string> ValueType;
+typedef allocator<ValueType, managed_shared_memory::segment_manager>
+		ShmemAllocator;
+typedef map<KeyType, MappedType, std::less<KeyType>, ShmemAllocator> MyMap;
+
+
+void print_mes(MyMap *mymap, int* flag)
+{
+	while (true)
+	{
+		if(*flag != quan_message)
+		{
+			std::lock_guard < std::mutex > lock(m_mutex);
+			std::cout << (mymap->end())->first << ":\t" <<
+				(mymap->end())->second << std::endl;
+			++quan_message;
+		}
+
+		using std::chrono::operator""s;
+		std::this_thread::sleep_until(std::chrono::system_clock::now() + 1s);
+
+
+	}
+	
+}
+
+
+void enter_mes(MyMap *mymap, const std::chrono::system_clock::time_point *tp, bool* flag)
+{
+	while (true)
+	{
+		//std::cout << "Your messege: ";
+		std::string mess;
+		std::cin >> mess;
+
+		auto tn = std::chrono::system_clock::now();
+		auto time =
+    	std::chrono::duration_cast<std::chrono::seconds>(tn - *tp);
+
+		std::lock_guard < std::mutex > lock(m_mutex);
+		mymap->insert(std::pair<KeyType, MappedType>(time.count(), mess));
+		++(*flag);
+
+		// m_mutex.lock();
+		// m_mutex.unlock();
+	}
+	
+}
+
+
+
+
+
+
 
 int main(int argc, char ** argv)
 {
@@ -34,14 +96,14 @@ int main(int argc, char ** argv)
 	//	open_or_create, flag_name.c_str(), 10);
 
 	//typedef int KeyType;
-	typedef int KeyType;
+/*	typedef int KeyType;
 	typedef std::string MappedType;
 	typedef std::pair<const int, std::string> ValueType;
 
 	typedef allocator<ValueType, managed_shared_memory::segment_manager>
 		ShmemAllocator;
 	typedef map<KeyType, MappedType, std::less<KeyType>, ShmemAllocator> MyMap;
-
+*/
 	ShmemAllocator alloc_inst (segment.get_segment_manager());
 
 	MyMap *mymap =
@@ -52,7 +114,9 @@ int main(int argc, char ** argv)
 	//print_map("Updated map: ", m);
 	
 	int *flag = segment.find_or_construct<int>("Integer")(0);
-	auto tp = std::chrono::system_clock::now();
+	const std::chrono::system_clock::time_point *tp = segment.find_or_construct
+		<std::chrono::system_clock::time_point>("clock")(std::chrono::system_clock::now());
+	// auto tp = std::chrono::system_clock::now();
 
 
 	// auto s = segment.find_or_construct < cont > ("lala")
@@ -73,10 +137,14 @@ int main(int argc, char ** argv)
 */
 	
 
+	// using std::chrono::operator""s;
+	// std::this_thread::sleep_until(std::chrono::system_clock::now() + 1s);
+
+
 
 
 //something is as wrong as possible, but I don't understand what to do
-	while(1)
+/*	while(1)
 	{
 		if(*flag)
 		{
@@ -96,7 +164,7 @@ int main(int argc, char ** argv)
 		*flag = 0;
 	}
 	
-
+*/
 
 
 
