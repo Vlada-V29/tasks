@@ -85,6 +85,7 @@ int main(int argc, char ** argv)
 
 	std::string raw_ip_address = "127.0.0.1";
 	auto port = 3333;
+	std::cout << "if you want to exit, then press \"\\exit\"" << std::endl;
 
 	try 
 	{
@@ -100,19 +101,6 @@ int main(int argc, char ** argv)
 		write_name(socket_enter);
 		
 
-		while (flag_exit)
-		{
-			socket_enter.connect(endpoint);
-			enter_message(socket_enter);
-			
-			if (!flag_exit)
-			{
-				socket_read.connect(endpoint);
-				std::cout << read_message(socket_read) << std::endl;
-				
-			}
-
-		}
 
 		std::thread th_enter;
 		std::thread th_print;
