@@ -48,8 +48,8 @@ std::string read_message(boost::asio::ip::tcp::socket & socket)
 
 void enter_message(boost::asio::ip::tcp::socket & socket)
 {
-	while (true)
-	{
+	//while (true)
+	//{
 		//std::cout << "Enter your message: ";
 		std::string message;
 		std::cin >> message;
@@ -62,7 +62,7 @@ void enter_message(boost::asio::ip::tcp::socket & socket)
 		boost::asio::write(socket, boost::asio::buffer(message));
 		// m_mutex.lock();
 		// m_mutex.unlock();
-	}
+	//}
 	
 }
 
@@ -99,6 +99,7 @@ int main(int argc, char ** argv)
 	const std::size_t size = 30;
 
 	auto port = 8000;
+	//auto port = 3333;
 
 	boost::asio::ip::tcp::endpoint endpoint(boost::asio::ip::address_v4::any(), port);
 

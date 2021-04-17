@@ -1,4 +1,5 @@
 #include <iostream>
+#include <thread>
 
 #include <boost/asio.hpp>
 
@@ -17,21 +18,21 @@ void write_name(boost::asio::ip::tcp::socket & socket)
 
 void enter_message(boost::asio::ip::tcp::socket & socket)
 {
-	while (true)
-	{
+	//while (true)
+	//{
 		//std::cout << "Enter your message: ";
 		std::string message;
 		std::cin >> message;
 		if(message == "\\exit")
 		{
 			flag_exit = true;
-			break;
+			//break;
 		}
 
 		boost::asio::write(socket, boost::asio::buffer(message));
 		// m_mutex.lock();
 		// m_mutex.unlock();
-	}
+	//}
 	
 }
 
@@ -52,6 +53,28 @@ std::string read_message(boost::asio::ip::tcp::socket & socket)
 }
 
 
+void enter_m(boost::asio::ip::tcp::endpoint endpoint, 
+		boost::asio::ip::tcp::socket socket_enter)
+{
+	while (!flag_exit)
+		{
+			socket_enter.connect(endpoint);
+			enter_message(socket_enter);
+
+		}
+}
+
+
+void read_m(boost::asio::ip::tcp::endpoint endpoint, 
+		boost::asio::ip::tcp::socket socket_read)
+{
+	while (!flag_exit)
+		{
+			socket_read.connect(endpoint);
+			std::cout << "server: " << read_message(socket_read) << std::endl;
+
+		}
+}
 
 
 
@@ -61,8 +84,6 @@ int main(int argc, char ** argv)
 	system("chcp 1251");
 
 	std::string raw_ip_address = "127.0.0.1";
-	//std::string name;
-
 	auto port = 3333;
 
 	try 
@@ -92,6 +113,15 @@ int main(int argc, char ** argv)
 			}
 
 		}
+
+		std::thread th_enter;
+		std::thread th_print;
+
+		th_enter = std::thread(enter_m, endpoint, socket_enter); 
+		th_print = std::thread(read_m, endpoint, socket_read); 
+		
+
+
 
 	}
 	catch (boost::system::system_error & e) 

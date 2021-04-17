@@ -18,21 +18,21 @@ void write_name(boost::asio::ip::tcp::socket & socket)
 
 void enter_message(boost::asio::ip::tcp::socket & socket)
 {
-	while (true)
-	{
+	//while (true)
+	//{
 		//std::cout << "Enter your message: ";
 		std::string message;
 		std::cin >> message;
 		if(message == "\\exit")
 		{
 			flag_exit = true;
-			break;
+			//break;
 		}
 
 		boost::asio::write(socket, boost::asio::buffer(message));
 		// m_mutex.lock();
 		// m_mutex.unlock();
-	}
+	//}
 	
 }
 
@@ -87,6 +87,8 @@ int main(int argc, char ** argv)
 	//std::string name;
 
 	auto port = 8000;
+	//std::string raw_ip_address = "127.0.0.1";
+	//auto port = 3333;
 
 	try 
 	{
