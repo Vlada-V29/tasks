@@ -18,21 +18,14 @@ void write_name(boost::asio::ip::tcp::socket & socket)
 
 void enter_message(boost::asio::ip::tcp::socket & socket)
 {
-	//while (true)
-	//{
-		//std::cout << "Enter your message: ";
-		std::string message;
-		std::cin >> message;
-		if(message == "\\exit")
-		{
-			flag_exit = true;
-			//break;
-		}
+	std::string message;
+	std::cin >> message;
+	if(message == "\\exit")
+	{
+		flag_exit = true;
+	}
 
-		boost::asio::write(socket, boost::asio::buffer(message));
-		// m_mutex.lock();
-		// m_mutex.unlock();
-	//}
+	boost::asio::write(socket, boost::asio::buffer(message));
 	
 }
 
@@ -45,9 +38,9 @@ std::string read_message(boost::asio::ip::tcp::socket & socket)
 	std::getline(input_stream, message);
 
 	if(message == "\\exit")
-		{
-			flag_exit = true;
-		}
+	{
+		flag_exit = true;
+	}
 
 	return message;
 }
@@ -57,11 +50,11 @@ void enter_m(boost::asio::ip::tcp::endpoint endpoint,
 		boost::asio::ip::tcp::socket socket_enter)
 {
 	while (!flag_exit)
-		{
-			socket_enter.connect(endpoint);
-			enter_message(socket_enter);
-
-		}
+	{
+		socket_enter.connect(endpoint);
+		enter_message(socket_enter);
+	
+	}
 }
 
 
@@ -69,11 +62,11 @@ void read_m(boost::asio::ip::tcp::endpoint endpoint,
 		boost::asio::ip::tcp::socket socket_read)
 {
 	while (!flag_exit)
-		{
-			socket_read.connect(endpoint);
-			std::cout << "server: " << read_message(socket_read) << std::endl;
+	{
+		socket_read.connect(endpoint);
+		std::cout << "server: " << read_message(socket_read) << std::endl;
 
-		}
+	}
 }
 
 
@@ -83,13 +76,12 @@ int main(int argc, char ** argv)
 {
 	system("chcp 1251");
 
-	std::string raw_ip_address = "85.26.165.210";
-	//std::string name;
+	std::cout << "Enter IP: ";
+	std::string raw_ip_address;
+	std::cin >> raw_ip_address;
 
 	auto port = 8000;
-	//std::string raw_ip_address = "127.0.0.1";
-	//auto port = 3333;
-
+	
 	try 
 	{
 		boost::asio::ip::tcp::endpoint endpoint(
@@ -103,20 +95,6 @@ int main(int argc, char ** argv)
 		socket_enter.connect(endpoint);
 		write_name(socket_enter);
 		
-
-		while (flag_exit)
-		{
-			socket_enter.connect(endpoint);
-			enter_message(socket_enter);
-			
-			if (!flag_exit)
-			{
-				socket_read.connect(endpoint);
-				std::cout << read_message(socket_read) << std::endl;
-				
-			}
-
-		}
 
 		std::thread th_enter;
 		std::thread th_print;

@@ -4,15 +4,6 @@
 #include <boost/asio.hpp>
 
 bool flag_exit = false;
-
-// std::string read_data(boost::asio::ip::tcp::socket & socket) 
-// {
-// 	const std::size_t length = 10;
-// 	char buffer[length];
-// 	boost::asio::read(socket, boost::asio::buffer(buffer, length));
-// 	return std::string(buffer, length);
-// }
-
 std::string read_name(boost::asio::ip::tcp::socket & socket) 
 {
 	boost::asio::streambuf buffer;
@@ -21,9 +12,6 @@ std::string read_name(boost::asio::ip::tcp::socket & socket)
 
 	std::string message;
 
-	// Because buffer 'buf' may contain some other data
-	// after '\n' symbol, we have to parse the buffer and
-	// extract only symbols before the delimiter.
 	std::istream input_stream(&buffer);
 	std::getline(input_stream, message, ':');
 
@@ -39,30 +27,23 @@ std::string read_message(boost::asio::ip::tcp::socket & socket)
 	std::getline(input_stream, message);
 
 	if(message == "\\exit")
-		{
-			flag_exit = true;
-		}
+	{
+		flag_exit = true;
+	}
 
 	return message;
 }
 
 void enter_message(boost::asio::ip::tcp::socket & socket)
 {
-	//while (true)
-	//{
-		//std::cout << "Enter your message: ";
-		std::string message;
-		std::cin >> message;
-		if(message == "\\exit")
-		{
-			flag_exit = true;
-			//break;
-		}
+	std::string message;
+	std::cin >> message;
+	if(message == "\\exit")
+	{
+		flag_exit = true;
+	}
 
-		boost::asio::write(socket, boost::asio::buffer(message));
-		// m_mutex.lock();
-		// m_mutex.unlock();
-	//}
+	boost::asio::write(socket, boost::asio::buffer(message));
 	
 }
 
@@ -70,11 +51,11 @@ void enter_m(boost::asio::ip::tcp::acceptor acceptor,
 		boost::asio::ip::tcp::socket socket_enter)
 {
 	while (!flag_exit)
-		{
-			acceptor.accept(socket_enter);
-			enter_message(socket_enter);
-
-		}
+	{
+		acceptor.accept(socket_enter);
+		enter_message(socket_enter);
+	
+	}
 }
 
 
@@ -83,11 +64,11 @@ void read_m(boost::asio::ip::tcp::acceptor acceptor,
 		std::string user_name)
 {
 	while (!flag_exit)
-		{
-			acceptor.accept(socket_read);
-			std::cout << user_name << " " << read_message(socket_read) << std::endl;
+	{
+		acceptor.accept(socket_read);
+		std::cout << user_name << " " << read_message(socket_read) << std::endl;
 
-		}
+	}
 }
 
 
@@ -99,8 +80,7 @@ int main(int argc, char ** argv)
 	const std::size_t size = 30;
 
 	auto port = 8000;
-	//auto port = 3333;
-
+	
 	boost::asio::ip::tcp::endpoint endpoint(boost::asio::ip::address_v4::any(), port);
 
 	boost::asio::io_service io_service;
@@ -118,11 +98,7 @@ int main(int argc, char ** argv)
 
 		acceptor.accept(socket_read);
 		std::string user_name = read_name(socket_read);
-		//std::cout << user_name << "\t";//<< std::endl;
-
-		// acceptor.accept(socket_read);
-		// std::cout << read_message(socket_read) << std::endl;
-
+		
 		std::thread th_enter;
 		std::thread th_print;
 
@@ -131,8 +107,6 @@ int main(int argc, char ** argv)
 		
 		
 		
-		
-
 
 
 	}
