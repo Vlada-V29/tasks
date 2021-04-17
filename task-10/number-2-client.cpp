@@ -102,7 +102,8 @@ int main(int argc, char ** argv)
 		th_enter = std::thread(enter_m, endpoint, socket_enter); 
 		th_print = std::thread(read_m, endpoint, socket_read); 
 		
-
+		th_enter.join();
+		th_print.join();
 
 
 	}

@@ -102,7 +102,10 @@ int main(int argc, char ** argv)
 		std::thread th_print;
 
 		th_enter = std::thread(enter_m, acceptor, socket_enter); 
-		th_print = std::thread(read_m, acceptor, socket_read); 
+		th_print = std::thread(read_m, acceptor, socket_read);
+
+		th_enter.join();
+		th_print.join();
 		
 		
 	}
