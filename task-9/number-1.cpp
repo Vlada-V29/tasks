@@ -14,7 +14,8 @@
 #include <boost/interprocess/managed_shared_memory.hpp>
 
 using namespace boost::interprocess;
-int quan_message = 0;
+int counter_message = 0;
+bool flag_exit = false;
 std::mutex m_mutex;
 
 typedef int KeyType;
@@ -25,16 +26,21 @@ typedef allocator<ValueType, managed_shared_memory::segment_manager>
 typedef map<KeyType, MappedType, std::less<KeyType>, ShmemAllocator> MyMap;
 
 
-void print_mes(MyMap *mymap, int* flag)
+void print_mes(MyMap *mymap, int* counter)
 {
-	while (true)
+	while (!flag_exit)
 	{
-		if(*flag != quan_message)
+		if(*counter != counter_message)
 		{
 			std::lock_guard < std::mutex > lock(m_mutex);
 			std::cout << (mymap->end())->first << ":\t" <<
 				(mymap->end())->second << std::endl;
-			++quan_message;
+			++counter_message;
+
+			//if((mymap->end())->second == "\\exit")
+			//{
+			//	flag_exit = true;
+			//}
 		}
 
 		using std::chrono::operator""s;
@@ -46,21 +52,28 @@ void print_mes(MyMap *mymap, int* flag)
 }
 
 
-void enter_mes(MyMap *mymap, const std::chrono::system_clock::time_point *tp, int* flag)
+void enter_mes(MyMap *mymap, const std::chrono::system_clock::time_point *tp, int* counter)
 {
-	while (true)
+	while (!flag_exit)
 	{
 		//std::cout << "Your messege: ";
-		std::string mess;
-		std::cin >> mess;
-
+		std::string message;
+		std::cin >> message;
+		
+		if(message == "\\exit")
+		{
+			flag_exit = true;
+		}
+		
 		auto tn = std::chrono::system_clock::now();
 		auto time =
     	std::chrono::duration_cast<std::chrono::seconds>(tn - *tp);
 
 		std::lock_guard < std::mutex > lock(m_mutex);
-		mymap->insert(std::pair<KeyType, MappedType>(time.count(), mess));
-		++(*flag);
+		mymap->insert(std::pair<KeyType, MappedType>(time.count(), message));
+		++(*counter);
+
+		
 
 		// m_mutex.lock();
 		// m_mutex.unlock();
@@ -94,13 +107,13 @@ int main(int argc, char ** argv)
 
 	// print_map("Updated map: ", mymap);
 	
-	int *flag = segment.find_or_construct<int>("Integer")(0);
+	int *counter = segment.find_or_construct<int>("Integer")(0);
 	//int *number_of_users = segment.find_or_construct<int>("Integer")(1);
 	const std::chrono::system_clock::time_point *tp = segment.find_or_construct
 		<std::chrono::system_clock::time_point>("clock")(std::chrono::system_clock::now());
 	
 	auto iterator =  mymap->begin();
-	for(auto i = 0; i < *flag; ++i)
+	for(auto i = 0; i < *counter; ++i)
 	{
 		std::cout << (++iterator)->first << ":\t" <<
 				(++iterator)->second << std::endl;
@@ -115,8 +128,8 @@ int main(int argc, char ** argv)
 	std::thread th_enter;
 	std::thread th_print;
 
-	th_enter = std::thread(enter_mes, mymap, tp, flag); 
-	th_print = std::thread(print_mes, mymap, flag); 
+	th_enter = std::thread(enter_mes, mymap, tp, counter); 
+	th_print = std::thread(print_mes, mymap, counter); 
 
 
 
