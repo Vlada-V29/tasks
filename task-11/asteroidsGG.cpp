@@ -4,6 +4,8 @@
 #include <math.h>
 #include <iostream>
 #include<random>
+#include <memory>
+#include <functional>
 
 
 using namespace sf;
@@ -213,15 +215,15 @@ class asteroid : public Entity
 public:
   asteroid()
   {
-    // std::random_device rd;
-    // std::mt19937 mersenne(rd());
-    // std::uniform_real_distribution<> un_distrib(0, 4);
-    // this->set_dx(un_distrib(mersenne));
+    std::random_device rd;
+    std::mt19937 mersenne(rd());
+    std::uniform_real_distribution<> un_distrib(-4, 4);
+    this->set_dx(un_distrib(mersenne));
     //// dx = rand() % 8 - 4;
     //// dy = rand() % 8 - 4;
-    this->set_dx(rand() % 8 - 4);
-    this->set_dy(rand() % 8 - 4);
-    //this->set_dy(un_distrib(mersenne));
+    // this->set_dx(rand() % 8 - 4);
+    // this->set_dy(rand() % 8 - 4);
+    this->set_dy(un_distrib(mersenne));
     set_name("asteroid");
   }
 
@@ -331,7 +333,7 @@ public:
   }
 };
 
-bool isCollide(Entity *a, Entity *b)
+bool isCollide(std::unique_ptr<Entity> a, std::unique_ptr<Entity> b)
 {
   return ((b->get_x() - a->get_x()) * (b->get_x() - a->get_x()) +
       (b->get_y() - a->get_y()) * (b->get_y() - a->get_y())) <
@@ -340,10 +342,15 @@ bool isCollide(Entity *a, Entity *b)
 
 int main()
 {
-  srand(time(0));
+  // srand(time(0));
   // std::random_device rd;
   // std::mt19937 mersenne(rd());
   // std::uniform_real_distribution<> un_distrib(0, 1);
+  std::random_device rd;
+    std::mt19937 mersenne(rd());
+    std::uniform_int_distribution<> un_distrib_W(0, W);
+    std::uniform_int_distribution<> un_distrib_H(0, H);
+    std::uniform_real_distribution<> un_distrib_360(0, 360);
 
   RenderWindow app(VideoMode(W, H), "Asteroids!");
   app.setFramerateLimit(60);
@@ -370,24 +377,41 @@ int main()
   Animation sPlayer_go(t1, 40, 40, 40, 40, 1, 0);
   Animation sExplosion_ship(t7, 0, 0, 192, 192, 64, 0.5);
 
-  std::list<Entity *> entities;
+  //std::unique_ptr<Entity> item(new Entity);
+
+  std::vector<std::unique_ptr<Entity>> entities;
+  // std::list<std::reference_wrapper<Entity>> entities;
+  // //std::list<Entity *> entities;
+
 
   for (int i = 0; i < 2; i++)
   {
-    asteroid *a = new asteroid();
+    //asteroid *a = new asteroid();
+    std::unique_ptr<Entity> a(new asteroid);
 
     // std::random_device rd;
     // std::mt19937 mersenne(rd());
-    // std::uniform_int_distribution<> un_distrib(0, 10000);
-    // a->settings(sRock, un_distrib(mersenne) % W, un_distrib(mersenne) % H, un_distrib(mersenne) % 360, 25);
-    a->settings(sRock, rand() % W, rand() % H, rand() % 360, 25);
+    // std::uniform_int_distribution<> un_distrib_W(0, W);
+    // std::uniform_int_distribution<> un_distrib_H(0, H);
+    // std::uniform_int_distribution<> un_distrib_360(0, 360);
+    a->settings(sRock, un_distrib_W(mersenne), un_distrib_H(mersenne), un_distrib_360(mersenne), 25);
+    //a->settings(sRock, rand() % W, rand() % H, rand() % 360, 25);
     //a->settings(sRock, 300, 300, 23, 25);
+    //entities.push_back(std::static_pointer_cast<>(a));
     entities.push_back(a);
   }
 
-  player *p = new player();
-  p->settings(sPlayer, 200, 200, 0.0, 20);
+  // //player *p = new player();
+  // //std::unique_ptr<player> p(new player);
+  std::unique_ptr<Entity> p(new player);
+  // player p0();
+  // Entity* p1 = *p0;
+  // std::unique_ptr<Entity> p = p1;
+  // entities.push_back(new player());
+  // entities
+  // p->settings(sPlayer, 200, 200, 0.0, 20);
   entities.push_back(p);
+
 
   /////main loop/////
   while (app.isOpen())
@@ -401,7 +425,8 @@ int main()
       if (event.type == Event::KeyPressed)
         if (event.key.code == Keyboard::Space)
         {
-          bullet *b = new bullet();
+          //bullet *b = new bullet();
+          std::unique_ptr<Entity> b(new bullet);
           b->settings(sBullet, p->get_x(), p->get_y(), p->get_angle(), 10);
           entities.push_back(b);
         }
@@ -412,11 +437,12 @@ int main()
     if (Keyboard::isKeyPressed(Keyboard::Left))
       p->set_angle(p->get_angle() - 3.0);
     if (Keyboard::isKeyPressed(Keyboard::Up))
-      p->set_thrust(true);
+      p.set_thrust(true); //????????????????????????????????????????????????????????????????/
     else
-      p->set_thrust(false);
+      (static_cast<player*>(p))->set_thrust(false);//???
+      (dynamic_cast<player*>(p))->set_thrust(false);
 
-    for (auto a : entities)
+    for (std::unique_ptr<Entity> a : entities)
       for (auto b : entities)
       {
         if (a->get_name() == "asteroid" && b->get_name() == "bullet")
@@ -425,7 +451,8 @@ int main()
             a->set_life(0);
             b->set_life(0);
 
-            Entity *e = new Entity();
+            //Entity *e = new Entity();
+            std::unique_ptr<Entity> e(new Entity);
             e->settings(sExplosion, a->get_x(), a->get_y());
             e->set_name("explosion");
             entities.push_back(e);
@@ -434,15 +461,16 @@ int main()
             {
               if (a->get_R() == 15)
                 continue;
-              Entity *e = new asteroid();
+              //Entity *e = new asteroid();
+              std::unique_ptr<Entity> e2(new asteroid);
 
               // std::random_device rd;
               // std::mt19937 mersenne(rd());
               // std::uniform_real_distribution<> un_distrib(0, 360);
 
-              // e->settings(sRock_small, a->get_x(), a->get_y(), un_distrib(mersenne), 15);
-              e->settings(sRock_small, a->get_x(), a->get_y(), rand() % 360, 15);
-              entities.push_back(e);
+              e->settings(sRock_small, a->get_x(), a->get_y(), un_distrib_360(mersenne), 15);
+              // e->settings(sRock_small, a->get_x(), a->get_y(), rand() % 360, 15);
+              entities.push_back(e2);
             }
           }
 
@@ -451,12 +479,13 @@ int main()
           {
             b->set_life(0);
 
-            Entity *e = new Entity();
+            //Entity *e = new Entity();
+            std::unique_ptr<Entity> e(new Entity);
             e->settings(sExplosion_ship, a->get_x(), a->get_y());
             e->set_name("explosion");
             entities.push_back(e);
 
-            //a->set_life(a->get_life() - 1);/////////////////////////////////////////
+            //a->set_life(a->get_life() - 1);///////////////////////////////////////////////////////////
 
             p->settings(sPlayer, W / 2, H / 2, 0, 20);
             p->set_dx(0);
@@ -481,25 +510,26 @@ int main()
     // std::mt19937 mersenne(rd());
     // std::uniform_int_distribution<> un_distrib(0, 100);
     // if (un_distrib(mersenne) % 10 == 0)////////////
-    if (rand() % 500 == 0)
+    if (un_distrib_W(mersenne) % 50 == 0)///////////////////////////////////////////////////////////////////////////
     {
-      asteroid *a = new asteroid();
+      // asteroid *a = new asteroid();
+      std::unique_ptr<Entity> a(new asteroid);
 
       // std::random_device rd;
       // std::mt19937 mersenne(rd());
       // std::uniform_real_distribution<> un_distrib_H(0, H);
       // std::uniform_real_distribution<> un_distrib_360(0, 360);
 
-      //a->settings(sRock, 0, un_distrib_H(mersenne), un_distrib_360(mersenne), 25);
-      a->settings(sRock, 0, rand() % H, rand() % 360, 25);
+      a->settings(sRock, 0, un_distrib_H(mersenne), un_distrib_360(mersenne), 25);
+      // a->settings(sRock, 0, rand() % H, rand() % 360, 25);
       entities.push_back(a);
     }
 
-    for (auto i = entities.begin(); i != entities.end();)
+    for (auto i = entities.begin(); i != entities.end();++i)
     {
-      Entity *e = *i;
+      //Entity *e = *i;
 
-      e->update();
+      i->update();////???????????????
       //(e->get_anim()).update();
       e->anim.update();
 
@@ -509,7 +539,7 @@ int main()
         delete e;
       }
       else
-        i++;
+        //i++;
     }
 
     //////draw//////
