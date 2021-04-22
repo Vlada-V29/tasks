@@ -13,7 +13,8 @@ using namespace sf;
 const int W = 1200;
 const int H = 800;
 
-float DEGTORAD = 0.017453f;
+const float DEGTORAD = 0.017453f;
+bool close = false;
 
 class Animation
 {
@@ -179,6 +180,15 @@ Animation anim;
     return anim;
   }
 
+  void add_life(int life_)
+  {
+    life += life_;
+  }
+  void sub_life(int life_)
+  {
+    life -= life_;
+  }
+
 
   void settings(Animation &a, int X, int Y, float Angle = 0, int radius = 1)
   {
@@ -275,11 +285,13 @@ class player : public Entity
 {
 private:
   bool thrust;
+  int scores;
 public:
   player()
   {
     this->set_name("player");
-    //this->set_life(3);
+    scores = 0;
+    this->set_life(3);
   }
 
   void set_thrust(bool thrust_)
@@ -290,6 +302,27 @@ public:
   {
     return thrust;
   }
+  void set_scores(int scores_)
+  {
+    scores = scores_;
+  }
+  void add_scores(int scores_)
+  {
+    scores += scores_;
+  }
+  int get_scores()
+  {
+    return scores;
+  }
+  //sub_life add_life//////////////////////////////////////////////////////////// 
+  // void add_life(int life_)
+  // {
+  //   scores += life_;
+  // }
+  // void sub_life(int life_)
+  // {
+  //   life -= life_;
+  // }
 
   void update()
   {
@@ -383,6 +416,18 @@ int main()
   // std::list<std::reference_wrapper<Entity>> entities;
   // //std::list<Entity *> entities;
 
+  // //player *p = new player();
+  // //std::unique_ptr<player> p(new player);
+//  std::shared_ptr<Entity> p(new player);//
+  // player p0();
+  // Entity* p1 = *p0;
+  // std::unique_ptr<Entity> p = p1;
+  // entities.push_back(new player());
+  // entities
+  // p->settings(sPlayer, 200, 200, 0.0, 20);
+//  entities.push_back(p); //
+  
+
 
   for (int i = 0; i < 2; i++)
   {
@@ -401,20 +446,13 @@ int main()
     entities.push_back(a);
   }
 
-  // //player *p = new player();
-  // //std::unique_ptr<player> p(new player);
-  std::shared_ptr<Entity> p(new player);
-  // player p0();
-  // Entity* p1 = *p0;
-  // std::unique_ptr<Entity> p = p1;
-  // entities.push_back(new player());
-  // entities
-  // p->settings(sPlayer, 200, 200, 0.0, 20);
+  std::shared_ptr<player> p(new player);
+  p->settings(sPlayer, 200, 200, 0.0, 20);
   entities.push_back(p);
 
 
   /////main loop/////
-  while (app.isOpen())
+  while (app.isOpen() && (!close))
   {
     Event event;
     while (app.pollEvent(event))
@@ -437,19 +475,25 @@ int main()
     if (Keyboard::isKeyPressed(Keyboard::Left))
       p->set_angle(p->get_angle() - 3.0);
     if (Keyboard::isKeyPressed(Keyboard::Up))
-      (std::dynamic_pointer_cast<player>(p))->set_thrust(true); //???????????????
+      p->set_thrust(true);
+      //(std::dynamic_pointer_cast<player>(p))->set_thrust(true); //???????????????
     else
+      p->set_thrust(false);
       //(static_cast<player*>(p))->set_thrust(false);//???
-      (std::dynamic_pointer_cast<player>(p))->set_thrust(false);
+      // (std::dynamic_pointer_cast<player>(p))->set_thrust(false);
 
     for (std::shared_ptr<Entity> a : entities)
       for (auto b : entities)
       {
-        if (a->get_name() == "asteroid" && b->get_name() == "bullet")
-          if (isCollide(std::dynamic_pointer_cast<asteroid>(a), std::dynamic_pointer_cast<bullet>(b)))
+        if (a->get_name() == "asteroid" && b->get_name() == "bullet")//
+          if (isCollide(a,b))//(isCollide(std::dynamic_pointer_cast<asteroid>(a), std::dynamic_pointer_cast<bullet>(b)))
           {
             a->set_life(0);
             b->set_life(0);
+
+            // (std::dynamic_pointer_cast<player>(entities[0]))->set_scores(
+            //     (std::dynamic_pointer_cast<player>(entities[0]))->get_scores() + 10
+            // );
 
             //Entity *e = new Entity();
             std::shared_ptr<Entity> e(new Entity);
@@ -459,8 +503,19 @@ int main()
 
             for (int i = 0; i < 2; i++)
             {
+
               if (a->get_R() == 15)
+              {
+                p->add_scores(10);
+                // (std::dynamic_pointer_cast<player>(entities[0]))->set_scores(
+                //     (std::dynamic_pointer_cast<player>(entities[0]))->get_scores() + 10);
                 continue;
+
+              }
+              p->add_scores(5);
+              // (std::dynamic_pointer_cast<player>(entities[0]))->set_scores(
+              //     (std::dynamic_pointer_cast<player>(entities[0]))->get_scores() + 5);
+                
               //Entity *e = new asteroid();
               std::shared_ptr<Entity> e2(new asteroid);
 
@@ -468,7 +523,7 @@ int main()
               // std::mt19937 mersenne(rd());
               // std::uniform_real_distribution<> un_distrib(0, 360);
 
-              e->settings(sRock_small, a->get_x(), a->get_y(), un_distrib_360(mersenne), 15);
+              e2->settings(sRock_small, a->get_x(), a->get_y(), un_distrib_360(mersenne), 15);
               // e->settings(sRock_small, a->get_x(), a->get_y(), rand() % 360, 15);
               entities.push_back(e2);
             }
@@ -485,11 +540,20 @@ int main()
             e->set_name("explosion");
             entities.push_back(e);
 
+            if(p->get_life() > 1)
+            {
+              p->sub_life(1);
+              p->settings(sPlayer, W / 2, H / 2, 0, 20);
+              p->set_dx(0);
+              p->set_dy(0);
+            }
+            else
+            {
+              close = true;
+            }
             //a->set_life(a->get_life() - 1);///////////////////////////////////////////////////////////
 
-            p->settings(sPlayer, W / 2, H / 2, 0, 20);
-            p->set_dx(0);
-            p->set_dy(0);
+            
           }
       }
 
@@ -497,8 +561,12 @@ int main()
     //   p->set_anim(sPlayer_go);
     // else
     //   p->set_anim(sPlayer);
-    if (std::dynamic_pointer_cast<player>(p)->get_thrust())  p->anim = sPlayer_go;
+
+    // if (std::dynamic_pointer_cast<player>(p)->get_thrust())  p->anim = sPlayer_go;
+    // else   p->anim = sPlayer;
+    if (p->get_thrust())  p->anim = sPlayer_go;
     else   p->anim = sPlayer;
+
 
     for (auto e : entities)
       if (e->get_name() == "explosion")
@@ -528,6 +596,7 @@ int main()
     for (auto i = entities.begin(); i != entities.end();)
     {
       std::shared_ptr<Entity> e = *i;
+      // Entity e = *i;
 
       e->update();////
       //(e->get_anim()).update();
@@ -538,7 +607,7 @@ int main()
         i = entities.erase(i);
         //delete e;
       }
-      else {}
+      else
         i++;
     }
 
@@ -546,8 +615,14 @@ int main()
     app.draw(background);
     for (auto i : entities)
       i->draw(app);
+    p->draw(app);
     app.display();
   }
+
+  // std::cout << "score: " << 
+  //     (std::dynamic_pointer_cast<player>(entities[0]))->get_scores() << std::endl;
+  std::cout << "score: " << 
+      p->get_scores() << std::endl;
 
   return 0;
 }
