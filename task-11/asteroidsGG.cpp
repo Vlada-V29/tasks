@@ -333,7 +333,7 @@ public:
   }
 };
 
-bool isCollide(std::unique_ptr<Entity> a, std::unique_ptr<Entity> b)
+bool isCollide(std::shared_ptr<Entity> a, std::shared_ptr<Entity> b)
 {
   return ((b->get_x() - a->get_x()) * (b->get_x() - a->get_x()) +
       (b->get_y() - a->get_y()) * (b->get_y() - a->get_y())) <
@@ -379,7 +379,7 @@ int main()
 
   //std::unique_ptr<Entity> item(new Entity);
 
-  std::vector<std::unique_ptr<Entity>> entities;
+  std::vector<std::shared_ptr<Entity>> entities;
   // std::list<std::reference_wrapper<Entity>> entities;
   // //std::list<Entity *> entities;
 
@@ -387,7 +387,7 @@ int main()
   for (int i = 0; i < 2; i++)
   {
     //asteroid *a = new asteroid();
-    std::unique_ptr<Entity> a(new asteroid);
+    std::shared_ptr<Entity> a(new asteroid);
 
     // std::random_device rd;
     // std::mt19937 mersenne(rd());
@@ -403,7 +403,7 @@ int main()
 
   // //player *p = new player();
   // //std::unique_ptr<player> p(new player);
-  std::unique_ptr<Entity> p(new player);
+  std::shared_ptr<Entity> p(new player);
   // player p0();
   // Entity* p1 = *p0;
   // std::unique_ptr<Entity> p = p1;
@@ -426,7 +426,7 @@ int main()
         if (event.key.code == Keyboard::Space)
         {
           //bullet *b = new bullet();
-          std::unique_ptr<Entity> b(new bullet);
+          std::shared_ptr<Entity> b(new bullet);
           b->settings(sBullet, p->get_x(), p->get_y(), p->get_angle(), 10);
           entities.push_back(b);
         }
@@ -437,22 +437,22 @@ int main()
     if (Keyboard::isKeyPressed(Keyboard::Left))
       p->set_angle(p->get_angle() - 3.0);
     if (Keyboard::isKeyPressed(Keyboard::Up))
-      p.set_thrust(true); //????????????????????????????????????????????????????????????????/
+      (std::dynamic_pointer_cast<player>(p))->set_thrust(true); //???????????????
     else
-      (static_cast<player*>(p))->set_thrust(false);//???
-      (dynamic_cast<player*>(p))->set_thrust(false);
+      //(static_cast<player*>(p))->set_thrust(false);//???
+      (std::dynamic_pointer_cast<player>(p))->set_thrust(false);
 
-    for (std::unique_ptr<Entity> a : entities)
+    for (std::shared_ptr<Entity> a : entities)
       for (auto b : entities)
       {
         if (a->get_name() == "asteroid" && b->get_name() == "bullet")
-          if (isCollide(a, b))
+          if (isCollide(std::dynamic_pointer_cast<asteroid>(a), std::dynamic_pointer_cast<bullet>(b)))
           {
             a->set_life(0);
             b->set_life(0);
 
             //Entity *e = new Entity();
-            std::unique_ptr<Entity> e(new Entity);
+            std::shared_ptr<Entity> e(new Entity);
             e->settings(sExplosion, a->get_x(), a->get_y());
             e->set_name("explosion");
             entities.push_back(e);
@@ -462,7 +462,7 @@ int main()
               if (a->get_R() == 15)
                 continue;
               //Entity *e = new asteroid();
-              std::unique_ptr<Entity> e2(new asteroid);
+              std::shared_ptr<Entity> e2(new asteroid);
 
               // std::random_device rd;
               // std::mt19937 mersenne(rd());
@@ -475,12 +475,12 @@ int main()
           }
 
         if (a->get_name() == "player" && b->get_name() == "asteroid")
-          if (isCollide(a, b))
+          if (isCollide(a, b))//std::dynamic_pointer_cast<asteroid>(
           {
             b->set_life(0);
 
             //Entity *e = new Entity();
-            std::unique_ptr<Entity> e(new Entity);
+            std::shared_ptr<Entity> e(new Entity);
             e->settings(sExplosion_ship, a->get_x(), a->get_y());
             e->set_name("explosion");
             entities.push_back(e);
@@ -497,7 +497,7 @@ int main()
     //   p->set_anim(sPlayer_go);
     // else
     //   p->set_anim(sPlayer);
-    if (p->get_thrust())  p->anim = sPlayer_go;
+    if (std::dynamic_pointer_cast<player>(p)->get_thrust())  p->anim = sPlayer_go;
     else   p->anim = sPlayer;
 
     for (auto e : entities)
@@ -513,7 +513,7 @@ int main()
     if (un_distrib_W(mersenne) % 50 == 0)///////////////////////////////////////////////////////////////////////////
     {
       // asteroid *a = new asteroid();
-      std::unique_ptr<Entity> a(new asteroid);
+      std::shared_ptr<Entity> a(new asteroid);
 
       // std::random_device rd;
       // std::mt19937 mersenne(rd());
@@ -525,21 +525,21 @@ int main()
       entities.push_back(a);
     }
 
-    for (auto i = entities.begin(); i != entities.end();++i)
+    for (auto i = entities.begin(); i != entities.end();)
     {
-      //Entity *e = *i;
+      std::shared_ptr<Entity> e = *i;
 
-      i->update();////???????????????
+      e->update();////
       //(e->get_anim()).update();
       e->anim.update();
 
       if (e->get_life() == 0)
       {
         i = entities.erase(i);
-        delete e;
+        //delete e;
       }
-      else
-        //i++;
+      else {}
+        i++;
     }
 
     //////draw//////
