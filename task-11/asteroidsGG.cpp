@@ -5,7 +5,7 @@
 #include <iostream>
 #include<random>
 #include <memory>
-#include <functional>
+//#include <functional>
 
 
 using namespace sf;
@@ -373,6 +373,128 @@ bool isCollide(std::shared_ptr<Entity> a, std::shared_ptr<Entity> b)
       ((a->get_R() + b->get_R()) * (a->get_R() + b->get_R()));
 }
 
+
+
+class Interface
+{
+public:
+  float x, y;
+  std::string name;
+  
+  Sprite sprite;
+  Color color;
+  sf::Text text;
+public:
+  Interface() : x(W/10), y(H/10), color(Color(175, 180, 240))
+  { 
+    name = "interface";
+  }
+  Interface(float x_,float y_, Color color_): x(x_), y(y_), color(color_)
+  {
+    name= "interface";
+  }
+
+  //virtual void update(){};
+
+
+  void set_position(int x_,int y_)
+  {
+    x=x_;
+    y=y_;
+  }
+
+  auto get_x()
+  {
+    return x;
+  }
+  auto get_y()
+  {
+    return y;
+  }
+
+  /*
+  void draw_interface(RenderWindow &app)
+  {
+    sf::Font font;
+    if(!font.loadFromFile("images/arial.ttf"))
+    {
+      std::cout<<"very bad";
+    }
+    RectangleShape rectangle(Vector2f(x, y));
+    //rectangle.move(x,y);
+    rectangle.setFillColor(color);
+    app.draw(rectangle);
+    // state_.move(0,0);
+    sf::Text text("Nice", font, 50);
+    app.draw(text);
+  }
+  */
+};
+
+
+class Interface_score : public Interface
+{
+//public:
+  
+public:
+  Interface_score() //: x(W/10), y(H/10), color(Color(175, 180, 240))
+  { 
+    Interface();
+    name = "interface_score";
+    // Texture t;
+    // t.loadFromFile("images/star.jpg");
+    // sprite.setTexture(t);
+    //sprite.setOrigin(w / 2, h / 2);
+    //sprite.setTextureRect(frames[0]);
+
+  }
+  Interface_score(float x_, float y_, Color color_)//: x(x_), y(y_), color(color_)
+  {
+    //Interface(x_, y_, color_);
+    x = x_;
+    y = y_;
+    color = color_;
+    name= "interface_score";
+    // Texture t;
+    // t.loadFromFile("images/star.jpg");
+    // sprite.setTexture(t);
+    
+  }
+
+  void draw(RenderWindow &app, int score = 0)
+  {
+    sprite.setPosition(this->x, this->y);
+    Texture t;
+    t.loadFromFile("images/star.png");
+    // t.loadFromFile("images/fire_red.png");
+    sprite.setTexture(t);
+    // sprite.setTextureRect(IntRect(this->x, this->y, 100, 300));
+    app.draw(sprite);
+
+    sf::Font font;
+    if(!font.loadFromFile("images/arial.ttf"))
+    {
+      std::cout<<"very bad";
+    }
+    ////RectangleShape rectangle(Vector2f(30, 30));//(this->x, this->y));
+    //rectangle.move(x,y);
+    ////rectangle.setFillColor(color);
+    //app.draw(rectangle);
+    // state_.move(0,0);
+    sf::Text text(std::to_string(score), font, 20);
+    text.setPosition(this->x + 30, this->y + 40);
+    text.setFillColor(Color(0, 0, 0));
+    app.draw(text);
+  }
+  
+
+
+  
+};
+
+
+
+
 int main()
 {
   // srand(time(0));
@@ -611,11 +733,28 @@ int main()
         i++;
     }
 
+
+    // //Interface_score in_sc(10,10, Color(175, 180, 240));
+    // Sprite sprite;
+    // Texture t;
+    // t.loadFromFile("images/star.jpg");
+    // sprite.setTexture(t);
+    // // sprite.setPosition(100,100);
+    // app.draw(sprite);
     //////draw//////
     app.draw(background);
     for (auto i : entities)
       i->draw(app);
     p->draw(app);
+
+    Interface_score insc(W-100,0, Color(175, 180, 240));
+    //Sprite sprite;
+    //Texture t;
+    //t.loadFromFile("images/star.jpg");
+    //insc.sprite.setTexture(t);
+    // sprite.setPosition(100,100);
+    // app.draw(insc.sprite);
+    insc.draw(app, p->get_scores());
     app.display();
   }
 
