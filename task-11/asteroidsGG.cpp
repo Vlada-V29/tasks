@@ -494,6 +494,74 @@ public:
 
 
 
+class Interface_health : public Interface
+{
+//public:
+  
+public:
+  Interface_health() //: x(W/10), y(H/10), color(Color(175, 180, 240))
+  { 
+    Interface();
+    name = "interface_health";
+    // Texture t;
+    // t.loadFromFile("images/star.jpg");
+    // sprite.setTexture(t);
+    //sprite.setOrigin(w / 2, h / 2);
+    //sprite.setTextureRect(frames[0]);
+
+  }
+  Interface_health(float x_, float y_, Color color_)//: x(x_), y(y_), color(color_)
+  {
+    //Interface(x_, y_, color_);
+    x = x_;
+    y = y_;
+    color = color_;
+    name= "interface_health";
+    // Texture t;
+    // t.loadFromFile("images/star.jpg");
+    // sprite.setTexture(t);
+    
+  }
+
+  void draw(RenderWindow &app, int live = 0)
+  {
+    const int w = 100;
+    sprite.setPosition(this->x, this->y);
+    Texture t;
+    t.loadFromFile("images/hearts.png");
+    // t.loadFromFile("images/fire_red.png");
+    t.setSmooth(true);
+    
+    //Animation sPlayer(t, 40, 0, 40, 40, 1, 0);
+    sprite.setTextureRect(IntRect(x + (3 - live)*w, y, w, w));
+  
+    sprite.setTexture(t);
+    // sprite.setTextureRect(IntRect(this->x, this->y, 100, 300));
+    app.draw(sprite);
+
+    sf::Font font;
+    if(!font.loadFromFile("images/arial.ttf"))
+    {
+      std::cout<<"very bad";
+    }
+    ////RectangleShape rectangle(Vector2f(30, 30));//(this->x, this->y));
+    //rectangle.move(x,y);
+    ////rectangle.setFillColor(color);
+    //app.draw(rectangle);
+    // state_.move(0,0);
+    //sf::Text text(std::to_string(score), font, 20);
+    //text.setPosition(this->x + 30, this->y + 40);
+    //text.setFillColor(Color(0, 0, 0));
+    app.draw(text);
+  }
+  
+
+
+  
+};
+
+
+
 
 int main()
 {
@@ -755,6 +823,10 @@ int main()
     // sprite.setPosition(100,100);
     // app.draw(insc.sprite);
     insc.draw(app, p->get_scores());
+
+    Interface_health inhe(0,0, Color(175, 180, 240));
+    inhe.draw(app, p->get_life());
+   
     app.display();
   }
 
