@@ -256,6 +256,40 @@ public:
   }
 };
 
+
+class healer : public Entity
+{
+public:
+  healer()
+  {
+    std::random_device rd;
+    std::mt19937 mersenne(rd());
+    std::uniform_real_distribution<> un_distrib(-4, 4);
+    
+    this->set_dx(un_distrib(mersenne));
+    this->set_dy(un_distrib(mersenne));
+    set_name("healer");
+  }
+
+public:
+  void update()
+  {
+    this->set_x(this->get_x() + this->get_dx());
+    this->set_y(this->get_y() + this->get_dy());
+
+    if (this->get_x() > W) 
+      this->set_x(0);
+    if (this->get_x() < 0)
+      this->set_x(W);
+    if (this->get_y() > H)
+      this->set_y(0);
+    if (this->get_y() < 0)
+      this->set_y(H);
+  }
+};
+
+
+
 class player : public Entity
 {
 private:
@@ -481,7 +515,7 @@ int main()
   RenderWindow app(VideoMode(W, H), "Asteroids!");
   app.setFramerateLimit(60);
 
-  Texture t1, t2, t3, t4, t5, t6, t7;
+  Texture t1, t2, t3, t4, t5, t6, t7, t8;
   t1.loadFromFile("images/spaceship.png");
   t2.loadFromFile("images/background.jpg");
   t3.loadFromFile("images/explosions/type_C.png");
@@ -489,6 +523,7 @@ int main()
   t5.loadFromFile("images/fire_blue.png");
   t6.loadFromFile("images/rock_small.png");
   t7.loadFromFile("images/explosions/type_B.png");
+  t8.loadFromFile("images/cake.png");
 
   t1.setSmooth(true);
   t2.setSmooth(true);
@@ -502,10 +537,31 @@ int main()
   Animation sPlayer(t1, 40, 0, 40, 40, 1, 0);
   Animation sPlayer_go(t1, 40, 40, 40, 40, 1, 0);
   Animation sExplosion_ship(t7, 0, 0, 192, 192, 64, 0.5);
+  Animation sHealer(t8, 0, 0, 50, 50, 1, 0.2);
 
   SoundBuffer shootBuffer;//создаём буфер для звука
   shootBuffer.loadFromFile("sounds/shoot.ogg");//загружаем в него звук
   Sound shoot(shootBuffer);//создаем звук и загружаем в него звук из буфера
+  
+  SoundBuffer healthBuffer;
+  healthBuffer.loadFromFile("sounds/health.wav");
+  Sound health(healthBuffer);
+
+  // SoundBuffer explosionBuffer;
+  // explosionBuffer.loadFromFile("sounds/explosion.wav");
+  // Sound explosion(explosionBuffer);
+  
+  // SoundBuffer endBuffer;
+  // endBuffer.loadFromFile("sounds/end.wav");
+  // Sound end(endBuffer);
+
+  
+  Music music;//создаем объект музыки
+  music.openFromFile("sounds/music.ogg");//загружаем файл
+  music.play();//воспроизводим музыку
+  // music.setLoop(true);
+  // music.setVolume(100);
+  
   
   //std::unique_ptr<Entity> item(new Entity);
   std::vector<std::shared_ptr<Entity>> entities;
@@ -517,15 +573,13 @@ int main()
     std::shared_ptr<Entity> a(new asteroid);
 
     a->settings(sRock, un_distrib_W(mersenne), un_distrib_H(mersenne), un_distrib_360(mersenne), 25);
-    //a->settings(sRock, rand() % W, rand() % H, rand() % 360, 25);
-    //a->settings(sRock, 300, 300, 23, 25);
-    //entities.push_back(std::static_pointer_cast<>(a));
     entities.push_back(a);
   }
 
   std::shared_ptr<player> p(new player);
   p->settings(sPlayer, 200, 200, 0.0, 20);
   entities.push_back(p);
+
 
 
   /////main loop/////
@@ -544,7 +598,7 @@ int main()
           b->settings(sBullet, p->get_x(), p->get_y(), p->get_angle(), 10);
           entities.push_back(b);
 
-          // shoot.play();
+          shoot.play();
         }
     }
 
@@ -586,6 +640,7 @@ int main()
               e2->settings(sRock_small, a->get_x(), a->get_y(), un_distrib_360(mersenne), 15);
               entities.push_back(e2);
             }
+            // explosion.play();
           }
 
         if (a->get_name() == "player" && b->get_name() == "asteroid")
@@ -611,6 +666,22 @@ int main()
               close = true;
             }
             
+            // damage.play();
+            // explosion.play();
+          }
+
+        if (a->get_name() == "player" && b->get_name() == "healer")
+          if (isCollide(a, b))
+          {
+            b->set_life(0);
+
+            if(p->get_life() < 3)
+            {
+              p->add_life(1);
+            }
+            
+            health.play();
+            
           }
       }
 
@@ -629,6 +700,12 @@ int main()
     {
       std::shared_ptr<Entity> a(new asteroid);
       a->settings(sRock, 0, un_distrib_H(mersenne), un_distrib_360(mersenne), 25);
+      entities.push_back(a);
+    }
+    if (un_distrib_W(mersenne) % 250 == 0)
+    {
+      std::shared_ptr<Entity> a(new healer);
+      a->settings(sHealer, 0, un_distrib_H(mersenne), un_distrib_360(mersenne), 25);
       entities.push_back(a);
     }
 
@@ -666,6 +743,7 @@ int main()
     app.display();
   }
 
+  // end.play();
   std::cout << "score: " << 
       p->get_scores() << std::endl;
 
