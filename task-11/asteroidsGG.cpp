@@ -2,16 +2,16 @@
 #include <SFML/Audio.hpp>
 
 #include <time.h>
+// #include <ctime>
 #include <list>
 #include <math.h>
 #include <iostream>
 #include<random>
 #include <memory>
 
-// #include "asteroids.hpp"
-//#include <functional>
+#include <chrono>
+#include <thread>
 
-//using namespace Animation;
 
 using namespace sf;
 
@@ -547,13 +547,13 @@ int main()
   healthBuffer.loadFromFile("sounds/health.wav");
   Sound health(healthBuffer);
 
-  // SoundBuffer explosionBuffer;
-  // explosionBuffer.loadFromFile("sounds/explosion.wav");
-  // Sound explosion(explosionBuffer);
+  SoundBuffer explosionBuffer;
+  explosionBuffer.loadFromFile("sounds/explosion.wav");
+  Sound explosion(explosionBuffer);
   
-  // SoundBuffer endBuffer;
-  // endBuffer.loadFromFile("sounds/end.wav");
-  // Sound end(endBuffer);
+  SoundBuffer endBuffer;
+  endBuffer.loadFromFile("sounds/end.wav");
+  Sound end(endBuffer);
 
   
   Music music;//создаем объект музыки
@@ -640,7 +640,7 @@ int main()
               e2->settings(sRock_small, a->get_x(), a->get_y(), un_distrib_360(mersenne), 15);
               entities.push_back(e2);
             }
-            // explosion.play();
+            explosion.play();
           }
 
         if (a->get_name() == "player" && b->get_name() == "asteroid")
@@ -667,7 +667,7 @@ int main()
             }
             
             // damage.play();
-            // explosion.play();
+            explosion.play();
           }
 
         if (a->get_name() == "player" && b->get_name() == "healer")
@@ -696,13 +696,13 @@ int main()
           e->set_life(0);
 
 
-    if (un_distrib_W(mersenne) % 50 == 0)///////////////////////////////////////////////////////////////////////////
+    if (un_distrib_W(mersenne) % 10 == 0)///////////////////////////////////////////////////////////////////////////
     {
       std::shared_ptr<Entity> a(new asteroid);
       a->settings(sRock, 0, un_distrib_H(mersenne), un_distrib_360(mersenne), 25);
       entities.push_back(a);
     }
-    if (un_distrib_W(mersenne) % 250 == 0)
+    if (un_distrib_W(mersenne) % 150 == 0)
     {
       std::shared_ptr<Entity> a(new healer);
       a->settings(sHealer, 0, un_distrib_H(mersenne), un_distrib_360(mersenne), 25);
@@ -743,9 +743,16 @@ int main()
     app.display();
   }
 
-  // end.play();
+  music.pause();
+  end.play();
+  // system("pause");
+
   std::cout << "score: " << 
       p->get_scores() << std::endl;
+  
+  
+  std::chrono::seconds dura(1);
+  std::this_thread::sleep_for( dura );
 
   return 0;
 }
