@@ -50,7 +50,9 @@ private:
     sf::Font         m_font;
     sf::Text         m_text;
 
+    // Calculator m_calculator = Calculator(float, float);
     Calculator m_calculator;
+    // std::complex < float > const_c = std::complex < float >(0.7885f * std::cos(3 * M_PI / 4), 0.7885f * std::sin(3 * M_PI / 4));//0.7885f * cos(3 * M_PI / 4), 0.7885f * sin(3 * M_PI / 4)
 
 	bool m_need_redraw;
 

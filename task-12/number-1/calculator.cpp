@@ -36,8 +36,8 @@ void Calculator::calculate(
 		{
 			for (auto x = 0U; x < m_width; ++x) 
 			{
-				std::complex < float > z(0.0f, 0.0f);
-				std::complex < float > c(
+				// std::complex < float > z(0.0f, 0.0f);
+				std::complex < float > z(
 					center.x - width  / 2.0f + dx * x,
 					center.y - height / 2.0f + dy * y					
 				);
@@ -46,7 +46,7 @@ void Calculator::calculate(
 
 				for (; iteration < m_max_iterations && std::norm(z) < 4.0f; ++iteration)
 				{
-					z = z * z + c;
+					z = z * z + const_c;
 				}
 
 				m_field[y][x] = iteration; // ?
@@ -71,3 +71,8 @@ void Calculator::calculate(
 }
 
 // =============================================================================
+
+// void Calculator::set_const(std::complex < float >c)
+// {
+// 	const_c = c;
+// }

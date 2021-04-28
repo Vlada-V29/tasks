@@ -54,6 +54,7 @@ public:
 public:
 
 	void calculate(const sf::Vector2f center, const float width, const float height);
+	// void set_const(std::complex < float >c);
 
 private:
 
@@ -63,4 +64,7 @@ private:
     std::size_t m_max_iterations;
 
 	field_t m_field;
+
+	std::complex < float > const_c = std::complex < float >(0.7885f * std::cos(3 * M_PI / 4), 0.7885f * std::sin(3 * M_PI / 4));//0.7885f * cos(3 * M_PI / 4), 0.7885f * sin(3 * M_PI / 4)
+
 };

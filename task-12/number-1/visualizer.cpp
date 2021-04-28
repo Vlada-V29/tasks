@@ -39,8 +39,12 @@ void Visualizer::initialize()
 
 void Visualizer::run()
 {
+	// const_c = std::complex < float >(Re, Im);
+	
+	// m_calculator.set_const(const_c);
 	while (m_window.isOpen()) 
 	{
+		
 		review();
 		update();
 		render();
@@ -93,10 +97,10 @@ void Visualizer::handle_key_pressed(const sf::Keyboard::Key code) noexcept
     case sf::Keyboard::Up:
         m_view.move(sf::Vector2f(0.0f, -offset_y));
         break;
-	case sf::Keyboard::Add:
+	case sf::Keyboard::P:
         m_view.scale(1.0f / factor);
         break;
-    case sf::Keyboard::Subtract:
+    case sf::Keyboard::M:
         m_view.scale(factor);
         break;
     default:
